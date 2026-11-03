@@ -1,0 +1,57 @@
+# Kafka core concepts: exercises
+
+Try these without looking at `answers.md`.
+
+## Conceptual
+
+1. In your own words, what is the "log" at the heart of Kafka, and what are two
+   consequences of data being append-only?
+   
+   The log concept in Kafka concerns the core idea that consists of a sequence of records and does not overwrite themselves and just append at the end. 
+   
+2. What is the main difference between how a classic message queue and Kafka treat a
+   message after it has been read?
+   
+   A classic message is deleted right after the its processing by a consumer. While Kafka messages are stored and retained for a configurable period of time. 
+   
+3. Match each term to its role: broker, cluster, topic, producer, consumer.
+
+	broker - node that is the Kafka server storing data and serving requests
+	cluster - group of nodes working together
+	topic - specified type of message processing
+	producer - who sends messages to a topic
+	consumer - who gets messages from a topic and process it
+	
+4. What are bootstrap servers, and why do you not have to list every broker in the
+   cluster when configuring a client?
+   
+   Newer Kafka cluster contains bootstrap servers nativelly and this is the way a consumer/service finds the Kafka cluster and its structure, such as its address, and its layout format, what are the brokers that do something and not other.
+   
+5. A message in Kafka has a key, a value, a timestamp, and headers. Which part is the
+   actual payload, and what does Kafka itself understand about its contents?
+   
+   The actual payload of a Kafka message is the value. And Kafka understand it as pure bits. 
+   
+6. What job did ZooKeeper do in older Kafka, and what replaced it in modern Kafka?
+
+	ZooKeeper used to manage the Kafka cluster, but it was replaced to a nativelly builtin Kafka Raft (KRaft).
+	
+7. Give two situations where Kafka is a good fit and one where a direct HTTP or gRPC
+   call would be better.
+   
+   Declouped services and asynchronous communications are good fits for Kafka. While services that depends on request/response style is not a good fit for Kafka.
+   
+8. Three different services all need to react to the same `orders` events, each doing
+   something different. Explain why Kafka handles this well.
+   
+   Kafka handles this well because different consumers can be related to the same Kafka broker and the queue will be consumed without duplicatas such as consuming the same event.
+
+## Hands-on thinking
+
+9. Draw (on paper or in text) a simple diagram: two producers writing to a topic
+   `payments`, a cluster of three brokers, and two consumers reading the topic.
+   Label where the messages are stored.
+10. Retention is set to 7 days on a topic. A consumer reads a message today. Is the
+    message gone after it is read? When would it actually disappear?
+	
+	The message is not deleted because Kafka will maintain that message during the retention period and other consumers can read that same messagem, if desired. Just a new log will be emmited when the message is consumed by the consumer.

@@ -1,0 +1,55 @@
+# Topics, partitions, and offsets: exercises
+
+Try these without looking at `answers.md`.
+
+## Conceptual
+
+1. What is the relationship between a topic and a partition? Is a topic a single log?
+	A topic can be divided in one or more partitions where the logs can be appended-only. 
+
+2. What is an offset? Is offset 42 enough to identify a message, or do you need more?
+	An offset is a number that marks each message inside a partition. So, only the number is not enough to identify a message, but the offset in a partition. 
+
+3. State Kafka's ordering guarantee precisely. Where is order guaranteed and where is
+   it not?
+   The order is just guaranteed inside a partition. So, if you need messages to be oredered, you need to group them inside the same partition. 
+   
+4. How does a producer decide which partition a message goes to when the message has
+   a key? And when it has no key?
+   The broker (I think is the broker), hashes the key and link this hash of the key to the same partition every time a new message with this key shows up. 
+   When a new message has no key, the broker distribute the messages by itself loading the different partions equally.
+   
+5. You need all events for a given `customerId` to be processed in order. How do you
+   achieve that, and what do you use as the message key?
+   You need to set a key that will mark all the messages with that key to be directed to the same partition so it can be ordered correctly. Let's think the customerId of an user is the key, so every event or message for that customerId will be redirected to the same partition and be organized.
+   
+6. What is a replication factor of 3? Describe the roles of leader, follower, and
+   in-sync replica.
+   A replication factor of 3 is many replicas a partition should have in different brokers. Those replicas receives the same messages but there is one that is the leader that contains all read and writes and it is the source of truth. The follower replica of a partition just copies the data from the leader. 
+   The in-sync replicas just keep syncing data from the other replicar to improve fault-tolerance between them. 
+   
+7. The leader broker for a partition crashes. What happens so the partition stays
+   available?
+   In-sync replicas is managed to elect a new leader from the followers that are synced with the previous leader that broke.
+   
+8. What is the difference between deleting messages by retention time and log
+   compaction? Give a use case for compaction.
+   Kafka do retention of the logs/messages by time when a message is kept through a determined time window, when it reaches the limit, it deletes those messages.
+   Log compaction is a way to retain messages/logs by a key. It can be used when you need to keep the last messages within a key to keep the current state of that key, for example.
+
+
+## Hands-on thinking
+
+9. A topic `orders` has 3 partitions. A producer sends 9 messages with no key. Roughly
+   how are they distributed, and can you rely on reading all 9 in the exact order they
+   were sent? Explain.
+   As the 3 partitions could receive the messages and they are not labeled with a key, the broker distribute the messages balanced. This way, 3 messages goes to each partition. 
+   As they are not labeled by a key, they are processed separately in each partition. So, they are ordered somehow inside a partition but Kafka does not keep track and order between the different partitions. This way, you can not rely on reading all 9 in the exact order they were sent, but how the consumer of the partition consumes them.
+   
+   
+10. The same topic now receives messages keyed by `customerId`. Customer A sends 4
+    events, customer B sends 2. How many partitions could these land on, and what is
+    guaranteed about the order of customer A's events?
+	These two groups of messages could land on a same partition, or at the most, in two partitions if they exist. So Kafka can keep track of the order of the messages for the customerId and process them organized. The key-hash is what guarantee the ordering in processing the same customerId messages. 
+	
+	

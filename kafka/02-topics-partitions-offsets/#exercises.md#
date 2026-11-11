@@ -5,14 +5,14 @@ Try these without looking at `answers.md`.
 ## Conceptual
 
 1. What is the relationship between a topic and a partition? Is a topic a single log?
-	A topic can be divided in one or more partitions where the logs can be appended-only. 
+	A topic can be divided in one or more partitions where the logs are appended-only. 
 
 2. What is an offset? Is offset 42 enough to identify a message, or do you need more?
 	An offset is a number that marks each message inside a partition. So, only the number is not enough to identify a message, but the offset in a partition. 
 
 3. State Kafka's ordering guarantee precisely. Where is order guaranteed and where is
    it not?
-   The order is just guaranteed inside a partition. So, if you need messages to be oredered, you need to group them inside the same partition. 
+   The order is just guaranteed inside a partition. So, if you need messages to be ordered, you need to group them inside the same partition. 
    
 4. How does a producer decide which partition a message goes to when the message has
    a key? And when it has no key?
@@ -50,6 +50,5 @@ Try these without looking at `answers.md`.
 10. The same topic now receives messages keyed by `customerId`. Customer A sends 4
     events, customer B sends 2. How many partitions could these land on, and what is
     guaranteed about the order of customer A's events?
-	These two groups of messages could land on a same partition, or at the most, in two partitions if they exist. So Kafka can keep track of the order of the messages for the customerId and process them organized. The key-hash is what guarantee the ordering in processing the same customerId messages. 
-	
+	These two groups of messages could land on a same partition, or at the most, in two partitions if they exist. So Kafka can keep track of the order of the messages for the customerId and process them organized. The key-hash is what guarantee the ordering in processing the same customerId messages inside the same partition.
 	

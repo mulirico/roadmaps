@@ -1,4 +1,4 @@
-3# Topics, partitions, and offsets
+# Topics, partitions, and offsets
 
 ## What this covers
 

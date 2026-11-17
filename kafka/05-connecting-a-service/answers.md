@@ -2,6 +2,12 @@
 
 ## Conceptual
 
+ Primeira ideia é do client que necessita do ponto de conexão com a biblioteca, depois de um bootstrap server e por fim um tópico no qual ele vai se conectar, seja como consumer ou producer. 
+ 
+ A segunda ideia importante é de como um producer precisa de algumas características como: configurações de durabilidade (acknowledge), um group id para as partições e por fim a política própria de commit do offset. 
+ 
+
+
 1. A Kafka client library, the bootstrap servers (at least one broker address), and a
    topic. A producer additionally needs its durability setting (`acks`). A consumer
    additionally needs a `group.id` and an offset-commit strategy (auto or manual).
